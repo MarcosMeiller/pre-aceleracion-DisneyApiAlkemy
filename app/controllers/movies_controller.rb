@@ -1,4 +1,5 @@
 class MoviesController < ApplicationController
+  before_action :authenticate_user, only: [:auth]
   def index
     @movie = Movie.all
      render json: @movie
