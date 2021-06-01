@@ -2,7 +2,8 @@ class UsersController < ApplicationController
     before_action :authenticate_user, only: [:auth]
 
     def index
-        render json: {status: 200, msg: 'Autenticado'}
+        user = User.last
+        render json: user.to_json
     end
 
     def user_params
