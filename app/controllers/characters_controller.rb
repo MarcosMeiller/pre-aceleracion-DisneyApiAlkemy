@@ -1,4 +1,6 @@
 class CharactersController < ApplicationController
+  #before_action :authenticate_user, only: [:create]
+
     def index
         @character = Character.all
          render json: @character

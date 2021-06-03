@@ -1,10 +1,9 @@
 Rails.application.routes.draw do
-  post 'user_token' => 'user_token#create'
   get 'movies/index'
 
   root 'movies#index'
   resources :movies, only: [:create,:show,:update,:destroy,:index]
-
+  get 'search', to: 'movies#search'
 
   post 'user_token' => 'user_token#create'
 
@@ -18,5 +17,7 @@ Rails.application.routes.draw do
   get 'characters/index'
   resources :characters, only: [:create,:show,:update,:destroy,:index]
 
+  get 'genres/index'
+  resources :genres, only: [:create,:show,:update,:destroy,:index]
 
 end

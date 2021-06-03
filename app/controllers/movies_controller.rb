@@ -1,8 +1,8 @@
 class MoviesController < ApplicationController
-  before_action :authenticate_user, only: [:auth]
+  #before_action :authenticate_user, only: [:create]
   def index
-    @movie = Movie.all
-     render json: @movie
+    @movies= Movie.all
+     render json: @movies
 
   end
 
@@ -35,6 +35,40 @@ class MoviesController < ApplicationController
     @movie.destroy
 
     redirect_to root_path
+  end
+
+  def search
+    
+    genre = Genre.find(params[:genre])
+    @movie = Movie.where(["title LIKE ?","%#{params[:q]}%"]).order("creation_date #{params[:order]}")
+    @variable = @movie(genre)
+    render json: @variable
+    #if params[:order].present?
+    #  @movie = Movie.where(["title LIKE ?","%#{params[:q]}%"]).order("creation_date #{params[:order]}")
+    #else
+    #  @movie = Movie.where(["title LIKE ?","%#{params[:q]}%"])
+    #end
+    
+    #if @movie
+    #  if params[:genre].present? && @movie.length() > 1 && @movie.kind_off?(array)
+    #    genre = Genre.find(params[:genre])
+    #    @movie.each {|n|
+    #      if n.genres == genre
+    #        @movies << n
+    #      end
+    #    }
+    #    @movie = @movies
+
+ #     else
+  #      genre = Genre.find(params[:genre])
+   #     if @movie.genres != genre
+    #      @movie = nil
+     #   end
+      #end
+      #render json: @movie
+    #else
+    #  render json: Movie.all
+    #end
   end
 
   private 
