@@ -1,10 +1,5 @@
 class UsersController < ApplicationController
-    before_action :authenticate_user, only: [:auth]
-      #before_action: authorized
-
-    def auto_login
-        render json: @user, mesagge: "bienvenido"
-    end
+    #before_action :authenticate_user, only: [:auth]
 
     def index
         user = User.last
