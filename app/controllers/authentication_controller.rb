@@ -1,8 +1,7 @@
 class AuthenticationController < ApplicationController
-    #before_action :authorized
 
     def auto_login
-        render json: @user, mesagge: "bienvenido"
+        render json: @user, mesagge: "Welcome"
     end
     
     def login
@@ -13,8 +12,7 @@ class AuthenticationController < ApplicationController
             if @user.authenticate(params[:password])
                 secret_key = Rails.application.secrets.secret_key_base[0]
                 puts secret_key
-                token = JWT.encode(@user,'secret_key')
-                puts "entre al login"
+                token = JWT.encode({user_id: @user.id}, secret_key)
                 render json: {user: @user, token: token}
             else
                 render status: :unauthorized

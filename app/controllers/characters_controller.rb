@@ -1,5 +1,5 @@
 class CharactersController < ApplicationController
-  #before_action :authenticate_user, only: [:create]
+  before_action :authenticate
     def index
       @pagy, @characters= pagy(Character.select('name','image'))
       render json: {Characters: @characters,pagy: @pagy}
@@ -20,7 +20,7 @@ class CharactersController < ApplicationController
             @character.movies << movie
         end
           end
-        render json: @character, status: :created
+        render json: {character: @character,msg: "created successfully"}, status: :created
         else 
           render status:401
       end

@@ -1,43 +1,19 @@
 class ApplicationController < ActionController::API
     include Pagy::Backend
-    #before_action :authorized
 
-    #def encode_token(payload)
-    #   JWT.encode(payload,'secret_key')
-    #end
+    def authenticate
+        authorization_header = request.headers[:authorization]
+        if (!authorization_header)
+            render json:"no ha podido ingresar por falta de token", status: :unauthorized
+        else
+            token = authorization_header.split(" ")[1]
+            secret_key = Rails.application.secrets.secret_key_base[0]
+            decoded_token = JWT.decode(token,secret_key)[0]
 
-    #def auth_header
-    #    puts "error23"
+            @user = User.find(decoded_token["user_id"])
+        end
 
-    #   request.headers['Authorization']
-    #end
-
-    #def decoded_token
-    #    if auth_header
-    #        token = auth_header.split(" ")[1]
-    #        puts token
-
-#            begin
- #               JWT.decode(token,'secret_key',true,algorithm: 'HS256')
-  #          rescue JWT::DecodeError
-   #             nil
-    #        end
-     #   end
-    #end
-
-    #def logged_in_user
-     #   if decoded_token
-      #      user_id = decoded_token[0]['user_id']
-       #     @user = User.find_by_id(user_id)
-       #end
-    #end
-
-    #def logged_in?
-    #    !!logged_in_user #devuelve true o false
-    #end
-
-    #def authorized
-     #   render json: {message: "falta loggin"}, status: :unauthorized unless logged_in?
-    #end
+    end
+    
     
 end

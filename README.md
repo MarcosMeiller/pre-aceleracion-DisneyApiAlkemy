@@ -21,4 +21,6 @@ Things you may want to cover:
 
 * Deployment instructions
 
-* ...
+* Postman: https://www.postman.com/collections/1b2fed79b5074f355b52.
+you have to provide a email and password in the .ENV to send a email to the new User
+

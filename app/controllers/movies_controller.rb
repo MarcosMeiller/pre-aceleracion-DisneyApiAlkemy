@@ -1,5 +1,5 @@
 class MoviesController < ApplicationController
-  #before_action :authenticate_user, only: [:create]
+  before_action :authenticate
 
   def index
    # if !params[:q].blank? or !params[:genre].blanck? or !params[:order].blanck?
@@ -33,7 +33,7 @@ class MoviesController < ApplicationController
     
     #@movie = Movie.new(title: params[:title],image: params[:image],creation_date: params[:creation_date], rating: params[:rating])
     if @movie.save 
-      render json: @movie, status: :created
+      render json: {msg: "created successfully", movie: @movie}, status: :created
     else 
       render status:401
     end
@@ -74,31 +74,29 @@ class MoviesController < ApplicationController
   end
 
   def search
-    if params[:q] && params[:order] && params[:genre]
+    if params[:name] && params[:order] && params[:genre]
       genre = Genre.find(params[:genre])
-      datoComparativo =  genre.movies
-      movies = Movie.where(["title LIKE ?","%#{params[:q]}%"]).order("creation_date #{params[:order]}")
-      dato = Array:movies
+      comparativeDate =  genre.movies
+      movies = Movie.where(["title LIKE ?","%#{params[:name]}%"]).order("creation_date #{params[:order]}")
+      listMovies = Array:movies
       movies.each do |movie|
-        datoComparativo.each do |comparar| 
-          if movie.title == comparar.title
-            dato << movie
-          else
-            resultado = "no existe"
+        comparativeDate.each do |date| 
+          if movie.title == date.title
+            listMovies << movie
           end
-        end
+        
       end
-    render json: dato
+    render json: listMovies
     end
-    if params[:q] && params[:order] && !params[:genre]
-      movies = Movie.where(["title LIKE ?","%#{params[:q]}%"]).order("creation_date #{params[:order]}")
+    if params[:name] && params[:order] && !params[:genre]
+      movies = Movie.where(["title LIKE ?","%#{params[:name]}%"]).order("creation_date #{params[:order]}")
       render json: movies
     end
-    if params[:q] && !params[:order] && !params[:genre]
-      movies = Movie.where(["title LIKE ?","%#{params[:q]}%"])
+    if params[:name] && !params[:order] && !params[:genre]
+      movies = Movie.where(["title LIKE ?","%#{params[:name]}%"])
       render json: movies
     end
-    if !params[:q] && !params[:order] && params[:genre]
+    if !params[:name] && !params[:order] && params[:genre]
       genre = Genre.find(params[:genre])
       datoComparativo =  genre.movies
       movies = Movie.all
@@ -114,7 +112,7 @@ class MoviesController < ApplicationController
       end
       render json: dato
     end
-    if !params[:q] && !params[:order] && !params[:genre]
+    if !params[:name] && !params[:order] && !params[:genre]
       @pagy, @movies= pagy(Movie.all)
       render json: {Movies: @movies,pagy: @pagy}
     end
