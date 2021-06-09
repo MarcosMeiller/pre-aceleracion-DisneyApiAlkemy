@@ -60,42 +60,70 @@ class CharactersController < ApplicationController
         if (params[:name] && params[:age] && params[:movie])
           characters = Character.where(["name LIKE ?","%#{params[:name]}%"]).where(age: params[:age].to_i)
           movie = Movie.find(params[:movie])
-          datoComparativo =  movie.characters
+          comparativeDates =  movie.characters
+          characterFiltered = Array:characters
+          characters.each do |character|
+            comparativeDates.each do |date| 
+              if character.name == date.name && character.id == date.id
+                characterFiltered << character
+              end
+            end
+          end
+          render json: characterFiltered
+        end
+        if !params[:name] && params[:age] && params[:movie]
+          characters = Character.where(age: params[:age].to_i)
+          movie = Movie.find(params[:movie])
+          comparativeDates =  movie.characters
           peliculaFiltrada = Array:characters
           characters.each do |character|
-            datoComparativo.each do |comparar| 
-              if character.name == comparar.name && character.id == comparar.id
+            comparativeDates.each do |date| 
+              if character.name == date.name && character.id == date.id
                 peliculaFiltrada << character
               end
             end
           end
-          render json: peliculaFiltrada
+          render json:{results: peliculaFiltrada}
+        end
+        if params[:name] && !params[:age] && params[:movie]
+          characters = Character.where(["name LIKE ?","%#{params[:name]}%"])
+          movie = Movie.find(params[:movie])
+          comparativeDates =  movie.characters
+          peliculaFiltrada = Array:characters
+          characters.each do |character|
+            comparativeDates.each do |date| 
+              if character.name == date.name && character.id == date.id
+                peliculaFiltrada << character
+              end
+            end
+          end
+          render json:{results: peliculaFiltrada}
         end
         if params[:name] && !params[:age] && !params[:movie]
           characters = Character.where(["name LIKE ?","%#{params[:name]}%"])
-          render json: characters
+          render json: {results: characters}
 
         end
         if !params[:name] && !params[:age] && params[:movie]
           movie = Movie.find(params[:movie])
           characters =  movie.characters
-          render json: characters
+          render json: {results: characters}
 
 
         end
         if !params[:name] && params[:age] && !params[:movie]
           characters = Character.where(age: params[:age].to_i)
-          render json: characters
+          render json: {results: characters}
 
         end
         if !params[:name] && !params[:age] && !params[:movie]
           characters = Character.all
-          render json: characters
+          render json: {results: characters}
         end
     end
       
     private 
-    def character_params
+    def character_params 
       params.require(:character).permit(:name, :age, :weight, :history)
     end
 end

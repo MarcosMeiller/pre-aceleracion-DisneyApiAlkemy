@@ -1,16 +1,6 @@
 class MoviesController < ApplicationController
   before_action :authenticate
 
-  def index
-   # if !params[:q].blank? or !params[:genre].blanck? or !params[:order].blanck?
-   #   search     
-   # end
-   # @pagy, @movies= pagy(Movie.all)
-   # render json: {Movies: @movies,pagy: @pagy}
-    
-
-  end
-
   def show 
     @movie = Movie.find(params[:id])
     render json: @movie
@@ -31,7 +21,6 @@ class MoviesController < ApplicationController
         end
       end
     
-    #@movie = Movie.new(title: params[:title],image: params[:image],creation_date: params[:creation_date], rating: params[:rating])
     if @movie.save 
       render json: {msg: "created successfully", movie: @movie}, status: :created
     else 
@@ -40,7 +29,7 @@ class MoviesController < ApplicationController
   end
 
    
-  def movie_params
+  def movie_params #i had a error and i cant use it in the create and update method
     params.require(:movie).permit(:title, :image, :creation_date, :rating)
   end
 
@@ -86,36 +75,36 @@ class MoviesController < ApplicationController
           end
         
       end
-    render json: listMovies
+    
+      end
+      render json: {Movies: listMovies}
     end
     if params[:name] && params[:order] && !params[:genre]
       movies = Movie.where(["title LIKE ?","%#{params[:name]}%"]).order("creation_date #{params[:order]}")
-      render json: movies
+      render json: {Movies: movies}
     end
     if params[:name] && !params[:order] && !params[:genre]
       movies = Movie.where(["title LIKE ?","%#{params[:name]}%"])
-      render json: movies
+      render json: {Movies: movies}
     end
     if !params[:name] && !params[:order] && params[:genre]
       genre = Genre.find(params[:genre])
-      datoComparativo =  genre.movies
+      dateComparative =  genre.movies
       movies = Movie.all
-      dato = Array:movies
+      moviesList = Array:movies
       movies.each do |movie|
-        datoComparativo.each do |comparar| 
-          if movie.title == comparar.title
-            dato << movie
-          else
-            resultado = "no existe"
+        dateComparative.each do |date| 
+          if movie.title == date.title
+            moviesList << movie
           end
         end
       end
-      render json: dato
+      render json: {Movies: moviesList}
     end
-    if !params[:name] && !params[:order] && !params[:genre]
-      @pagy, @movies= pagy(Movie.all)
-      render json: {Movies: @movies,pagy: @pagy}
-    end
+      if !params[:name] && !params[:order] && !params[:genre]
+        @pagy, @movies= pagy(Movie.all)
+        render json: {Movies: @movies,pagy: @pagy}
+      end
+    
   end
-
 end
